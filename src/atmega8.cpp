@@ -46,8 +46,7 @@ AvrDevice_atmega8::AvrDevice_atmega8() :
     fuses->SetFuseConfiguration(16, 0xd9e1);
     irqSystem = new HWIrqSystem(this, 2, 19); //2 bytes per vector, 19 vectors
     eeprom = new HWEeprom(this, irqSystem, 512, 15);
-    HWStackSram * stack_ram = new HWStackSram(this, 11); // Stack Pointer data space used 11 Bit wide.
-    stack = stack_ram;
+    stack = new HWStackSram(this, 11); // Stack Pointer data space used 11 Bit wide.
     osccal_reg = new OSCCALRegister(this, &coreTraceGroup, OSCCALRegister::OSCCAL_V3);
     portb = new HWPort(this, "B");
     portc = new HWPort(this, "C", false, 7);
@@ -180,8 +179,8 @@ AvrDevice_atmega8::AvrDevice_atmega8() :
     acomp = new HWAcomp(this, irqSystem, PinAtPort(portd, 6), PinAtPort(portd, 7), 16, ad, timer1, sfior_reg);
 
     rw[0x5f] = statusRegister;
-    rw[0x5e] = &stack_ram->sph_reg;
-    rw[0x5d] = &stack_ram->spl_reg;
+    rw[0x5e] = &((HWStackSram *)stack)->sph_reg;
+    rw[0x5d] = &((HWStackSram *)stack)->spl_reg;
 //  rw[0x5c] Reserved
     rw[0x5b] = gicr_reg;
     rw[0x5a] = gifr_reg;
